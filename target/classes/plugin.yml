@@ -1,0 +1,4 @@
+name: DynMarket
+main: io.github.kuohsuanlo.dynmarket.DynMarket
+version: 1.0.0e
+loadbefore: [essentials]
