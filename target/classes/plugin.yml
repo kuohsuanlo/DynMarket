@@ -2,3 +2,8 @@ name: DynMarket
 main: io.github.kuohsuanlo.dynmarket.DynMarket
 version: 1.0.0
 loadbefore: [essentials]
+commands:
+  dynsell:
+    description: .
+    aliases: dsell
+    usage:

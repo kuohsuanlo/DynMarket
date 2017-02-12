@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import java.util.HashMap;
 
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -24,7 +25,7 @@ import net.milkbowl.vault.permission.Permission;
  *
  * @author Dinnerbone
  */
-public class DynMarket extends JavaPlugin {
+public class DynMarket extends JavaPlugin  implements CommandExecutor {
     private static final Logger log = Logger.getLogger("Minecraft");
    
     public static Economy econ = null;
@@ -56,14 +57,33 @@ public class DynMarket extends JavaPlugin {
         getLogger().info( pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!" );
     }
     
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] split) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
             return false;
         }
         Player player = (Player) sender; 
         
-        if(command.getLabel().equals("dynsell")) {
-        	
+        if(command.getName().equalsIgnoreCase("dynsell")) {
+        	if (args.length == 1 ) {
+		    	if (sender instanceof Player) {
+					if (args[0].equals("hand")){
+						int hand_id = player.getItemInHand().getType().getId();
+						int hand_data = player.getItemInHand().getData().getData();
+						int hand_num = player.getItemInHand().getAmount();
+						if(hand_id<=max_id){
+							double total_price =0;
+							for(int i=0;i<hand_num;i++){
+								player.getItemInHand().setAmount(player.getItemInHand().getAmount()-1);
+								mobj[hand_id].mpool_number[hand_data]+=1;
+								double price = ((double)mobj[anchor_id].mpool_number[0]/mobj[hand_id].mpool_number[hand_data])*1;
+								total_price +=price;
+								EconomyResponse r_receive = econ.depositPlayer(this.getServer().getOfflinePlayer(player.getUniqueId()), price);  
+							}
+							this.reportMessage(player.getName()+" sold "+hand_id+":"+hand_data+" * "+hand_num+" for total price : "+total_price);
+						}
+					}
+		    	}
+		    }
         }
         else if(command.getLabel().equals("dynbuy")) {
             
@@ -106,17 +126,14 @@ public class DynMarket extends JavaPlugin {
     private void setupPriceMarket(){
     	this.mobj = new mmaterial[this.max_id+1];
     	
-    	int[] pool_num= new int[16];
-    	double[] price_num = new double[16];
-    	for(int i=0;i<16;i++){
-    		pool_num[i] = 100;
-    		price_num[i] = 100;
-    	}
-    	
-    	//Anchor item
-    	price_num[anchor_id]= 1;
-    	
     	for(int i=0;i<=this.max_id;i++){
+    		int[] pool_num= new int[16];
+        	double[] price_num = new double[16];
+        	for(int d=0;d<16;d++){
+        		pool_num[d] = 100;
+        		price_num[d] = 100;
+        	}
+        	
     		this.mobj[i] = new mmaterial(i, price_num, pool_num);
     	}
     }
