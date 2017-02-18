@@ -3,7 +3,11 @@ main: io.github.kuohsuanlo.dynmarket.DynMarket
 version: 1.0.0
 loadbefore: [essentials]
 commands:
-  dynsell:
+  dsell:
     description: .
-    aliases: dsell
+    aliases: ds
+    usage:
+  dbuy:
+    description: .
+    aliases: db
     usage:
