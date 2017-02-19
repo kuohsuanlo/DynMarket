@@ -1,0 +1,10 @@
+ANCHOR_ITEM_ID: 264
+DEFAULT_NUMBER_IN_MARKET: 100
+SELLING_TAX_RATE: 0.07
+BUYING_TAX_RATE: 0.03
+YOU_SELL_ITEM_TEXT: '§a[動態市場]§7 : 你賣出 %id%:%data% * %sold_number% 一共賺了 : §6%total_price%§7.
+  市場上剩餘 %item_left% 個'
+YOU_BUY_ITEM_TEXT: '§a[動態市場]§7 : 你購買 %id%:%data% * %sold_number% 一共花了 : §6%total_price%§7.
+  市場上剩餘 %item_left% 個'
+NO_ITEM_LEFT: '§a[動態市場]§7 : %id%:%data% 在市場上剩餘 %item_left% 個'
+YOU_NOW_HAVE: '§a[動態市場]§7 : 你現在的金錢 $%balance%.'
