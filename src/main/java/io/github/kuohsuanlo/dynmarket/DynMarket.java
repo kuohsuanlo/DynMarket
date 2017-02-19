@@ -42,6 +42,7 @@ public class DynMarket extends JavaPlugin  implements CommandExecutor {
     public final int max_id= 453;
     public int anchor_id = 264; 
     public int default_number_in_market = 100; 
+    public int default_price = 1; 
     public double selling_tax_rate = 0.0;
     public double buying_tax_rate = 0.0;
     private mmaterial[] mobj ;
@@ -77,8 +78,8 @@ public class DynMarket extends JavaPlugin  implements CommandExecutor {
     	int anchor_number=0;
     	int item_number =0;
     	
-    	if(mobj[anchor_id].mpool_number[0]>0){
-    		anchor_number = mobj[anchor_id].mpool_number[0];
+    	if(mobj[anchor_id].mpool_number[data]>0){
+    		anchor_number = mobj[anchor_id].mpool_number[data];
     	}
     	else{
     		anchor_number = 1;
@@ -91,7 +92,7 @@ public class DynMarket extends JavaPlugin  implements CommandExecutor {
     		item_number = 1;
     	}
     	
-		ans = ((double)anchor_number/item_number)*(tax);
+		ans = ((double)anchor_number/item_number)*(tax)*mobj[id].starting_price[data];
     
     	return ans;
     }
@@ -323,10 +324,12 @@ public class DynMarket extends JavaPlugin  implements CommandExecutor {
     	this.mobj = new mmaterial[this.max_id+1];
     	for(int i=0;i<=this.max_id;i++){
     		int[] pool_num= new int[16];
+    		double[] price= new double[16];
         	for(int d=0;d<16;d++){
         		pool_num[d] = default_number_in_market;
+        		price[d]=default_price;
         	}
-    		this.mobj[i] = new mmaterial(i, pool_num);
+    		this.mobj[i] = new mmaterial(i, price,pool_num);
     	}
     	try {
       	   	String path = PRICE_FILE_LOCATION;
@@ -341,6 +344,7 @@ public class DynMarket extends JavaPlugin  implements CommandExecutor {
   	   			int id = Integer.valueOf(id_data[0]);
   	   			int data = Integer.valueOf(id_data[1]);
   	   			this.mobj[id].mpool_number[data] = Integer.valueOf(parts[1]);
+  	   			this.mobj[id].starting_price[data] = Double.valueOf(parts[2]);
   	   		}
   	   		in.close();
       	   	
@@ -361,8 +365,11 @@ public class DynMarket extends JavaPlugin  implements CommandExecutor {
             for(int i=0;i<=this.max_id;i++){
         		
         		for(int d=0;d<16;d++){
- 	                if( mobj[i].mpool_number[d]!=default_number_in_market  ||  d==0){
- 	        			bw.write(mobj[i].id+":"+d+ "/"+mobj[i].mpool_number[d]);
+ 	                if( mobj[i].mpool_number[d]!=default_number_in_market  ||
+ 	                	mobj[i].starting_price[d]!=default_price ||
+ 	                	d==0){
+ 	                	
+ 	        			bw.write(mobj[i].id+":"+d+ "/"+mobj[i].mpool_number[d]+"/"+mobj[i].starting_price[d]);
  	 	                bw.newLine();
  	                }
             	}
@@ -388,6 +395,7 @@ public class DynMarket extends JavaPlugin  implements CommandExecutor {
     	config = this.getConfig();
     	config.addDefault("ANCHOR_ITEM_ID", 264);
     	config.addDefault("DEFAULT_NUMBER_IN_MARKET", default_number_in_market);
+    	config.addDefault("DEFAULT_PRICE", default_price);
     	
     	config.addDefault("SELLING_TAX_RATE", 0.07);
     	config.addDefault("BUYING_TAX_RATE", 0.03);
@@ -407,6 +415,7 @@ public class DynMarket extends JavaPlugin  implements CommandExecutor {
     	buying_tax_rate = config.getDouble("BUYING_TAX_RATE");
     	anchor_id = config.getInt("ANCHOR_ITEM_ID");
     	default_number_in_market = config.getInt("DEFAULT_NUMBER_IN_MARKET");
+    	default_price = config.getInt("DEFAULT_PRICE");
 
     	you_sell_item_text = config.getString("YOU_SELL_ITEM_TEXT");
     	you_buy_item_text = config.getString("YOU_BUY_ITEM_TEXT");
