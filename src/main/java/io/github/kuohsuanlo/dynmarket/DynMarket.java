@@ -40,6 +40,7 @@ public class DynMarket extends JavaPlugin  implements CommandExecutor {
    
     public static Economy econ = null;
     public final int max_id= 453;
+    public final int max_id_of_block= 255;
     public int anchor_id = 264; 
     public int default_number_in_market = 100; 
     public int default_price = 1; 
@@ -96,6 +97,15 @@ public class DynMarket extends JavaPlugin  implements CommandExecutor {
     
     	return ans;
     }
+    
+    private byte fixData(int id, byte data){
+    	if(id>max_id_of_block){
+    		return 0;
+    	}
+    	else{
+    		return data;
+    	}
+    }
     @SuppressWarnings("deprecation")
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
@@ -106,7 +116,7 @@ public class DynMarket extends JavaPlugin  implements CommandExecutor {
         if(command.getName().equalsIgnoreCase("dsell")) {
         	if (sender instanceof Player) {
         		int id = 0;
-				int data = 0;
+				byte data = 0;
 				int sold_number = 0;
 				int item_left = 0;
 				double balance =0;
@@ -122,7 +132,7 @@ public class DynMarket extends JavaPlugin  implements CommandExecutor {
     					sold_number = player.getItemInHand().getAmount();
         			}
         		}
-        		
+        		data = fixData(id,data);
 				if(id<=max_id  &&  id>0){
 					double total_price =0;
 					for(int i=0;i<sold_number;i++){
@@ -163,7 +173,7 @@ public class DynMarket extends JavaPlugin  implements CommandExecutor {
         else if(command.getName().equalsIgnoreCase("dbuy")) {
 	    	if (sender instanceof Player) {
 	    		int id=0;
-	    		int data=0;
+	    		byte data=0;
 	    		int number=0;
 				int item_left = 0;
 				double balance =0;
@@ -180,7 +190,7 @@ public class DynMarket extends JavaPlugin  implements CommandExecutor {
 		    			}
 		    			else if(id_data.length==2){
 		    				id=Integer.valueOf(id_data[0]);
-		    				data = Integer.valueOf(id_data[1]);
+		    				data = Byte.valueOf(id_data[1]);
 		    			}
 	    			}
 	    			
@@ -199,7 +209,7 @@ public class DynMarket extends JavaPlugin  implements CommandExecutor {
 		    			}
 		    			else if(id_data.length==2){
 		    				id=Integer.valueOf(id_data[0]);
-		    				data = Integer.valueOf(id_data[1]);
+		    				data = Byte.valueOf(id_data[1]);
 		    			}
 	    			}
 	    			number=1;
@@ -209,6 +219,9 @@ public class DynMarket extends JavaPlugin  implements CommandExecutor {
 					data = player.getItemInHand().getData().getData();
 					number=1;
 	    		}
+
+        		data = fixData(id,data);
+	    		
 	    		if(id>0){
 	    			if(mobj[id].mpool_number[data]<=0){
 	    				String output = no_item_left+"";
